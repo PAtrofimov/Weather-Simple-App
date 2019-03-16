@@ -1,6 +1,6 @@
 {
   "name": "weather-simple",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "main": "./index.html",
   "license": "MIT",
   "scripts": {
@@ -9,10 +9,16 @@
     "build-dev": "parcel build ./src/index.html --no-minify --public-url ./",
     "prebuild": "shx rm -rf dist/",
     "build": "parcel build ./src/index.html --public-url ./",
-    "publish": "push-dir --dir=dist --branch=gh-pages --cleanup"
+    "publish": "push-dir --dir=dist --branch=gh-pages",
+    "predeploy": "yarn run build",
+    "deploy": "gh-pages -b master -d build"
   },
   "devDependencies": {
     "cssnano": "^4.1.10",
     "shx": "^0.3.2"
+  },
+  "homepage": "https://patrofimov.github.io/",
+  "dependencies": {
+    "gh-pages": "^2.0.1"
   }
 }
