@@ -10,8 +10,7 @@
     "prebuild": "shx rm -rf dist/",
     "build": "parcel build ./src/index.html --public-url ./",
     "publish": "push-dir --dir=dist --branch=gh-pages",
-    "predeploy": "yarn run build",
-    "deploy": "gh-pages -b master -d build"
+    "deploy": "push-dir --dir=dist --branch=gh-pages --cleanup"
   },
   "devDependencies": {
     "cssnano": "^4.1.10",
