@@ -3,7 +3,9 @@ import { CurrentWeather} from "../CurrentWeather";
 import { SearchBar} from "../SearchBar";
 import { WeatherForecast} from "../WeatherForecast";
 import ComponentFactory from "../../framework/ComponentFactory";
-import { bindScope } from "../../utils";
+import {FavouriteLocations} from "../FavouriteLocations";
+import {SearchHistory} from "../SearchHistory";
+import { bindScope, toggleInStorage, pushToStorage, isInStorage} from "../../utils";
 import { normalize } from "path";
  
 
@@ -27,7 +29,9 @@ export default class App extends Component {
     const searchInput = document.querySelector('#search-input').value;
     const btnUnit = document.querySelector('.unit-active .wi-fahrenheit');
     const unit = (btnUnit)?'imperial':'metric'; 
-    this._render({value: searchInput, unit: unit});
+    pushToStorage(searchInput, 'historyStorage');
+    this._render({value: searchInput, unit: unit, fav: isInStorage(searchInput, 'likedStorage')});
+    
 
   }
 
@@ -55,7 +59,9 @@ export default class App extends Component {
       const btn = document.querySelector('.wi-fahrenheit');
       btn.classList.toggle('unit-active');
 
-      this._render({value: searchInput, unit: 'imperial'});
+      
+
+      this._render({value: searchInput, unit: 'imperial', fav: isInStorage(searchInput, 'likedStorage')});
       return;
     }
 
@@ -65,14 +71,28 @@ export default class App extends Component {
       const btn = document.querySelector('.wi-celsius');
       btn.classList.toggle('unit-active');
 
-      this._render({value: searchInput, unit: 'metric'});
+      this._render({value: searchInput, unit: 'metric', fav: isInStorage(searchInput, 'likedStorage')});
       return;
     }
 
-    if (activeBtn.classList.contains('btn-search') || activeBtn.classList.contains('material-icons')) {
-      this.onSearch();
+    if (activeBtn.classList.contains('favourite-no') || activeBtn.classList.contains('favourite-yes')) {
+
+      const btnFavNo = document.querySelector('#favourite-no');
+      btnFavNo.classList.toggle('display-none');
+
+      const btnFavYes = document.querySelector('#favourite-yes');
+      btnFavYes.classList.toggle('display-none');
+
+      toggleInStorage(searchInput, 'likedStorage');
+
+      e.preventDefault();
+      
+      this._render({value: searchInput, unit: 'metric', fav: isInStorage(searchInput, 'likedStorage')});
+      return;
     }
-    
+
+    console.log('On click !!');
+        
   }
 
   bindEverything() {
@@ -83,10 +103,7 @@ export default class App extends Component {
 
   render(data) {
 
-    
-
     return [
-
 
       {
         tag: 'form',
@@ -111,7 +128,6 @@ export default class App extends Component {
         children: [{
 
             tag: SearchBar,
-            
             eventHandlers: 
           {
             click: this.onClick,
@@ -119,10 +135,33 @@ export default class App extends Component {
           },
             props: {
               query: data ?data.value:'',
-
             },
           },
 
+          {
+            tag: 'div',
+
+            attributes: [{
+              name: 'id',
+              value: 'favourite-container',
+            }, ],
+            children: [
+
+          {
+            tag: FavouriteLocations,
+            props: {
+              query: data,
+             },
+          },
+
+          {
+            tag: SearchHistory,
+            props: {
+              query: data,
+             },
+          },
+        ],
+      },
           {
             tag: 'div',
 
@@ -134,161 +173,25 @@ export default class App extends Component {
             children: [
 
               {
-
                 tag: CurrentWeather,
                 props: {
                   query: data,
                   unit: data?data.unit:'metric', 
-                  
+                  fav: data?data.fav:'no',
                 },
               },
-
+              
               {
-
                 tag: WeatherForecast,
                 props: {
                   query: data,
                   unit: data?data.unit:'metric',
                 },
               },
-
             ]
-
           }
-
         ],
-
       },
-
-
-
-      //{
-      //   tag: 'div',
-
-      //   attributes: [
-      //     {
-      //       id: 'search-bar',
-      //       value: 'I have got children',
-      //     },
-      //   ],
-      //   children: [
-
-      //     {
-      //       tag:'div',
-      //       attributes: [
-      //         {
-      //           class: 'row',
-      //         },
-      //       ],
-
-      //       children: [
-      //         {
-      //           //<input type="text" id="search-input" class="search" placeholder="E.g.: Kyiv, New York, 30.5 50.4, -74.0 40.7" title="Tap me and type!"/>
-      //           tag: 'input',
-
-      //           eventHandlers: [
-      //             {
-      //               eventType: 'change',
-
-      //             },
-      //           ],
-
-      //           classList: ['search'],
-      //           attributes: [
-      //             { type: 'search',
-      //               id: 'search-input',
-      //               title: 'Please search city!',
-      //               placeholder: 'E.g.: Kyiv, New York, 30.5 50.4, -74.0 40.7',
-      //               value:'E.g.: Kyiv, New York, 30.5 50.4, -74.0 40.7',
-      //             },
-      //           ],
-      //         },
-
-      //         {
-
-      //           tag: 'button',
-
-      //           eventHandlers: [
-      //             {
-      //               eventType: 'click',
-
-      //             },
-      //           ],
-
-
-      //         }
-
-      //       ],
-
-
-      //       // <button id="search-action" class="btn-frameless btn-search btn-round" title="Get weather info" type="button" disabled><i class="material-icons">search</i></button>
-      //     },
-
-      //   ],
-      //},
-
-
-      // {
-
-      //  tag: Temperature,
-      //   props: {
-      //     temperature: 7,
-      //     unit: 'C',
-      //   },
-      // },
-
-      // {
-      //   tag: 'div',
-      //   content: 'Me div',
-      //   classList: ['nice'],
-      //   attributes: [
-      //     {
-      //       name: 'title',
-      //       value: 'Me definitely nice div',
-      //     },
-      //   ],
-      // },
-
-      //     {
-      //       tag: 'div',
-      //       content: 'I am a parent div',
-      //       attributes: [
-      //         {
-      //           name: 'title',
-      //           value: 'I have got children',
-      //         },
-      //       ],
-      //       children: [
-      //         {tag:'div', content:'Child 1'},
-      //         {
-      //           tag:'div',
-      //           content:'Child 2',
-      //           children: [
-      //             {tag:'div', content:'Child 2.1'},
-      //             {tag:'div', content:'Child 2.2'},
-      //             {tag:Temperature, props: {temperature:100, unit: 'K',}}
-      //           ],
-      //         },
-      //         {tag:'div', content:'Child 3'},
-      //         {
-      //           tag: 'input',
-      //           eventHandlers: [
-      //             {
-      //               eventType: 'change',
-      //               // handler: this.handleChange, // bind(this): constructor(){this.method = this.method.bind(this);}
-      //             },
-      //           ],
-      //         },
-      //       ],
-      //     }, // <div title="I have got children"><div>Child 1</dev><div>Child 2<d2.1/><d2.2/></dev><div>Child 2</dev> </div>
-      //     {
-      //       tag: Wind,
-      //       props: {
-      //         speed: 250,
-      //         unit: 'mph',
-      //       },
-      //     },
-
     ];
   }
 }

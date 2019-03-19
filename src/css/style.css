@@ -179,7 +179,7 @@ button {
 
 input.search {
     flex: auto;
-
+    margin-bottom: 1rem;
     background-color: rgba(255,255,255,0.6);
     color: var(--color-darkest);
     border-width: 0 0 0.06rem 0;
@@ -327,7 +327,18 @@ input.search:focus {
 }
 
 main#app {
-    width: 50rem;
+    width: 55rem;
+}
+
+.liked-history-item {
+    width: 20rem;
+    font-size: 2rem;
+    color: lightsteelblue;
+}
+
+div#favourite-container {
+    display: flex;
+    justify-content: space-around;
 }
 
 /* ------- Forecast -------- */

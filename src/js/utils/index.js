@@ -54,29 +54,44 @@ export const createDomFragment = string => {
     });
   };
 
-  export const PushToStorage = (item, key)=>{
+  export const pushToStorage = (item, key)=>{
     const data = (localStorage[key]) ?
         JSON.parse(localStorage[key]) : [];
     let newData = data.slice();
     if(item){
-
-        if(newData.contains(item)){newData.push(item)};
-       
+        if(!newData.includes(item)){newData.push(item)};
         if(newData.length===10){newData.shift()};
-        
         localStorage[key] = JSON.stringify(newData);
     }
-
 };
+
 export const popFromStorage = (item, key)=>{
     const data = (localStorage[key]) ?
-        JSON.parse(localStorage[key]) : [];
+                  JSON.parse(localStorage[key]) : [];
     let newData = data.slice();
-
     let ind = newData.indexOf(item);
     newData.splice(ind,1);
     localStorage[key] = JSON.stringify(newData);
 };
+
+export const toggleInStorage = (item, key)=> {
+  const data = (localStorage[key]) ?
+  JSON.parse(localStorage[key]) : [];
+  let newData = data.slice();
+  let ind = newData.indexOf(item);
+  if (ind ==-1) {
+      pushToStorage(item, key);
+  } else {
+      popFromStorage(item, key);
+  }
+};
+
+export const isInStorage = (item, key)=> {
+  const data = (localStorage[key]) ?
+  JSON.parse(localStorage[key]) : [];
+  let newData = data.slice();
+  return newData.indexOf(item) !=-1 ;
+ };
 
 export const monthDay = (timestamp)=>{
   let xx = new Date(timestamp*1000);

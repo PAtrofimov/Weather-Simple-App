@@ -12,7 +12,7 @@ export default class SearchBar extends Component {
             <input type="text" value="${this.props ? this.props.query: ''}" id="search-input" class="search" placeholder="E.g.: Kyiv, New York, 30.5 50.4, -74.0 40.7" title="Enter city or location!"/>
             <div id="history-container" class="city-container"></div>
         </div>
-        <button id="search-action" class="btn-frameless btn-search btn-round" title="Get weather" type="button" ${this.props.query ? '': 'enabled'}><i class="material-icons" omclick=${null}>location_searching</i></button>
+        <button type="submit" id="search-action" class="btn-frameless btn-search btn-round" title="Get weather" type="button" ${this.props.query ? '': 'enabled'}><i class="material-icons" omclick=${null}>location_searching</i></button>
     </div>
     <div id="auto-complete-container" class="city-container"></div>
     <div id="favorites-container" class="city-container"></div>

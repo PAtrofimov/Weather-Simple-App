@@ -9,16 +9,51 @@ export default class SearchHistory extends Component {
     let data = JSON.parse(localStorage.getItem('historyStorage'));
         let resultArr =[];
         if(data){resultArr = Object.values(data)}
-        resultArr.unshift(`<h4 class="weather-fm">Search history</h4>`);
-        return (data)?resultArr.map((item)=>(
-        {
-            tag: 'div',
-            classList:'liked-item',
-            content: item,
-        }
-        )):'Nothing found';
-    }
-  
+        //resultArr.unshift(`Serch history`);
+       
+       return {
+          tag: 'select',
+          attributes: [{
+              name: 'id',
+              value: 'weather-history-main',
+            },
+
+            {
+              name: 'size',
+              value: '3',
+            },
+           
+          ],
+    
+          children: [ {
+           tag: 'optgroup',
+           classList: ['liked-history', 'liked-history-item'],
+          attributes: [{
+              name: 'label',
+              value: 'Serch history',
+            },
+            {
+              name: 'selected',
+              value: 'selected',
+            },
+          
+          ],
+          
+          
+          
+          children: (data)?resultArr.map((item, ind)=>(
+            {
+                tag: 'option',
+                classList: ['liked-history-item'],
+                content: item,
+                     
+            }
+            )):'',
+          }]
+          };
+                    
+      }
+               
 }
 
 ComponentFactory.register(SearchHistory);

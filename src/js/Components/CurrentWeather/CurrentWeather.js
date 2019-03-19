@@ -57,9 +57,10 @@ export default class CurrentWeather extends Component {
 
     return `<div id="weather-today-main" class="weather-today ${dataR?'weather-visible':'weather'}">
     <div class="wt-row">
-        <button id="favourite-no" class="favourite-no btn-frameless btn-round" title="Add to favourites!"><i class="material-icons">favorite_border</i></button>
-        <button id="favourite-yes" class="favourite-yes btn-frameless btn-round display-none" title="Remove from favourites"><i class="material-icons">favorite</i></button>
+        <button id="favourite-no" class="favourite-no btn-frameless btn-round ${(!this.props.fav)?'': 'display-none'}" title="Add to favourites!"><i class="material-icons favourite-no">favorite_border</i></button>
+        <button id="favourite-yes" class="favourite-yes btn-frameless btn-round ${(this.props.fav)?'': 'display-none'}" title="Remove from favourites"><i class="material-icons favourite-yes">favorite</i></button>
         <div class="wt-main-city" id="wt-cityFull">${dataR ? dataR.city: ''}</div>
+       
         <div class="wt-main-geo" id="wt-geoFull">${dataR ? dataR.lon + ', ' + dataR.lat: ''}</div>
     </div>
     <div class="wt-row">
@@ -107,7 +108,6 @@ export default class CurrentWeather extends Component {
                     </div>
                 </div>
                 <div class="wt-descr-main" id="wt-descr">${dataR ? dataR.descr: ''}</div>
-                <div class="wt-descr-extended" id="wt-descrDetails"></div>
             </div>
         </div>
     </div>
