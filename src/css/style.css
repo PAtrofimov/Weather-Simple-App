@@ -163,11 +163,6 @@ button {
     font-size: 2rem;
 }
 
-/* .btn-search:disabled {
-    color: var(--color-light);
-    background-color: var(--color-lightest-xparent);
-} */
-
 .input-container {
     position: relative;
 
@@ -177,11 +172,17 @@ button {
     flex: auto;
 }
 
+.weather-error {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 2rem;
+}
+
 input.search {
     flex: auto;
     margin-bottom: 1rem;
     background-color: rgba(255,255,255,0.6);
-    color: var(--color-darkest);
+    color: rgb(128, 0, 128);
     border-width: 0 0 0.06rem 0;
     height: 3rem;
     font-size: 2rem;
@@ -192,7 +193,7 @@ input.search {
 
 input.search::placeholder {
     font-size: 80%;
-    color: var(--color-neutral);
+    color: lightsteelblue;
 }
 
 input.search:focus {
@@ -359,30 +360,10 @@ div#favourite-container {
     margin: 0.2em;
 }
 
-/* .wf-darkest {
-    background-color: var(--color-darkest-xparent);
-    color: var(--color-lightest);
-}
-
-.wf-dark {
-    background-color: var(--color-dark-xparent);
-    color: var(--color-lightest);
-} */
-
 .wf-neutral {
     background-color: var(--color-neutral-xparent);
     color: var(--color-darkest);
 }
-
-/* .wf-light {
-    background-color: var(--color-light-xparent);
-    color: var(--color-darkest);
-}
-
-.wf-lightest {
-    background-color: var(--color-lightest-xparent);
-    color: var(--color-darkest);
-} */
 
 .wf-icon {
     display: flex;

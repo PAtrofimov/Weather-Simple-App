@@ -23,12 +23,9 @@ getCurrentWeather(data={}) {
  let query =  this.apiPath(data);
 
   if (!query) return {};
-     
 
 let path = URL_API_CURRENT.replace(/#query/, query);
 
-//api.openweathermap.org/data/2.5/weather?id=2172797
-//api.openweathermap.org/data/2.5/weather?lat=35&lon=139
 return fetch(path, {method: 'get'})
       .then(response => {
         if (response.ok)
@@ -42,6 +39,8 @@ return fetch(path, {method: 'get'})
       })
       .catch(error => {
          console.error(error);
+         if (error =='404')
+                 document.querySelector('#weather-container').innerHTML = 'Nothing found! Please check city!';
         throw error;
       });
 
@@ -69,6 +68,8 @@ return fetch(path, {method: 'get'})
             })
               .catch(error => {
                  console.error(error);
+                 if (error =='404')
+                 document.querySelector('#weather-container').innerHTML = "<h4 class='weather-error'>Nothing found! Please check city!</h4>";
                 throw error;
               });
 

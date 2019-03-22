@@ -11,7 +11,7 @@ export default class WeatherForecast extends Component {
     super(host, props);
 
     this.onServerResponse = this.onServerResponse.bind(this);
-    if (props && props.query)  {
+    if (props.query)  {
     this.onServerResponse(WeatherDataService.getWeatherForecast(props.query));
     }
   }
@@ -28,11 +28,14 @@ export default class WeatherForecast extends Component {
                 time: hourMinute(item.dt),
                 descr: item.weather[0].description,
                 temp: {value: Math.round(item.main.temp), unit: query.unit==='metric' ?'°C':'°F'},
-                icon: ICON_URL + item.weather[0].icon + ICON_EXT
-        
-      }} );
+                icon: ICON_URL + item.weather[0].icon + ICON_EXT,
+                ready: true,
 
-    this._render(datalist);
+        
+      };} );
+
+   // this._render(datalist);
+   this.updateState({datalist:datalist, ready: true});
 
     console.log(data);
     console.log(datalist);
@@ -43,7 +46,17 @@ export default class WeatherForecast extends Component {
 
   }
 
-  bindEverything() {
+  init() {
+
+    this.state = {
+      datalist: [{
+      dt: '',
+      time: '',
+      descr: '',
+      temp: {},
+      icon: '',
+      ready: false,
+    }], ready: false};
     this.onClick = this.onClick.bind(this);
   }
 
@@ -51,8 +64,9 @@ export default class WeatherForecast extends Component {
     console.log('Wow! Me clicked!!!!!');
   }
 
-  render(datalist=[]) {
+  render() {
 
+    let datalist = this.state.datalist;
     console.log(datalist);
 
     return  {
@@ -64,7 +78,7 @@ export default class WeatherForecast extends Component {
        
       ],
 
-      classList: [datalist?'weather-visible':'weather', 'wt-row', 'wt-row-spread'],
+      classList: [this.state.ready?'weather-visible':'weather', 'wt-row', 'wt-row-spread'],
 
       children: [
       

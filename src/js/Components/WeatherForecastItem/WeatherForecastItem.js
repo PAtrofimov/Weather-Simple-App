@@ -12,12 +12,12 @@ export default class WeatherForecastItem extends Component {
     return `<div class="wf-item">
     
     <div class="wf-icon">
-    <img src=${dataR ? dataR.icon: ''}  class ="wt-fc-icon-img" />
+    <img src=${dataR.ready ? dataR.icon: ''}  class ="wt-fc-icon-img" />
     </div>
-    <div class="wf-descr">${dataR?dataR.descr:''}</div>
-    <div class="wf-temp">${dataR?dataR.temp.value + dataR.temp.unit:''}</div>
-    <div class="wf-time">${dataR?dataR.time:''}</div>
-    <div class="wf-date">${dataR?dataR.dt:''}</div></div>    
+    <div class="wf-descr">${dataR.ready?dataR.descr:''}</div>
+    <div class="wf-temp">${dataR.ready?dataR.temp.value + dataR.temp.unit:''}</div>
+    <div class="wf-time">${dataR.ready?dataR.time:''}</div>
+    <div class="wf-date">${dataR.ready?dataR.dt:''}</div></div>    
     `;
   }
 }

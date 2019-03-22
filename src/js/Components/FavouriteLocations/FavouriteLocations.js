@@ -5,13 +5,23 @@ export default class SearchHistory extends Component {
     super(host, props);
   }
 
+  init() {
+    this.onClickItem.bind(this);
+  }
+  
+  onClickItem(e) {
+    event.stopPropagation();
+    if (e.target.value)
+    document.querySelector('#search-input').value = e.target.value;
+  }
+
+
   render() {
 
     let data = JSON.parse(localStorage.getItem('likedStorage'));
     let resultArr =[];
-    if(data){resultArr = Object.values(data)}
-    // resultArr.unshift(`Liked cities`);
-
+    if(data){resultArr = Object.values(data);}
+    
     return {
       tag: 'select',
       attributes: [{
@@ -25,6 +35,13 @@ export default class SearchHistory extends Component {
         },
        
       ],
+
+      eventHandlers: 
+      {
+        
+        click: this.onClickItem,
+      
+      },
 
       children: [ {
        tag: 'optgroup',
@@ -42,7 +59,7 @@ export default class SearchHistory extends Component {
       
       
       
-      children: (data)?resultArr.map((item, ind)=>(
+      children: (data)?resultArr.sort().map((item, ind)=>(
         {
             tag: 'option',
             classList: ['liked-history-item'],

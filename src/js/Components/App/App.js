@@ -12,26 +12,18 @@ import { normalize } from "path";
 export default class App extends Component {
   constructor(host, props={}) {
     super(host);
-    // bindScope(this, 'updateCount');
-    // this.updateState({
-    //   count: 5,
-    // });
+    
   }
-
-  // updateCount(newValue) {
-  //   this.updateState({
-  //     count: newValue,
-  //   });
-  // }
 
   onSearch() {
 
     const searchInput = document.querySelector('#search-input').value;
     const btnUnit = document.querySelector('.unit-active .wi-fahrenheit');
     const unit = (btnUnit)?'imperial':'metric'; 
-    pushToStorage(searchInput, 'historyStorage');
-    this._render({value: searchInput, unit: unit, fav: isInStorage(searchInput, 'likedStorage')});
-    
+   // pushToStorage(searchInput, 'historyStorage');
+
+    this.updateState({value: searchInput, unit: unit, fav: isInStorage(searchInput, 'likedStorage')});
+    //this._render({value: searchInput, unit: unit, fav: isInStorage(searchInput, 'likedStorage')});
 
   }
 
@@ -53,25 +45,17 @@ export default class App extends Component {
 
     const searchInput = document.querySelector('#search-input').value;
 
-    if (activeBtn.classList.contains('wi-celsius'))  {
+    if (activeBtn.classList.contains('wi-celsius') || activeBtn.classList.contains('wi-fahrenheit'))  {
       activeBtn.classList.toggle('unit-active');
 
-      const btn = document.querySelector('.wi-fahrenheit');
+      const btn = document.querySelector(activeBtn.classList.contains('wi-celsius')?'.wi-fahrenheit':'.wi-celsius');
       btn.classList.toggle('unit-active');
 
-      
+      e.preventDefault();
 
-      this._render({value: searchInput, unit: 'imperial', fav: isInStorage(searchInput, 'likedStorage')});
-      return;
-    }
+      this.updateState({value: searchInput, unit: activeBtn.classList.contains('wi-celsius')?'imperial':'metric', fav: isInStorage(searchInput, 'likedStorage')});
 
-    if (activeBtn.classList.contains('wi-fahrenheit')) {
-      activeBtn.classList.toggle('unit-active');
-      
-      const btn = document.querySelector('.wi-celsius');
-      btn.classList.toggle('unit-active');
-
-      this._render({value: searchInput, unit: 'metric', fav: isInStorage(searchInput, 'likedStorage')});
+     // this._render({value: searchInput, unit: activeBtn.classList.contains('wi-celsius')?'imperial':'metric', fav: isInStorage(searchInput, 'likedStorage')});
       return;
     }
 
@@ -86,8 +70,13 @@ export default class App extends Component {
       toggleInStorage(searchInput, 'likedStorage');
 
       e.preventDefault();
+
+      const btnUnit = document.querySelector('.unit-active .wi-fahrenheit');
+      const unit = (btnUnit)?'imperial':'metric';
+
+      this.updateState({value: searchInput, unit: unit, fav: isInStorage(searchInput, 'likedStorage')});
       
-      this._render({value: searchInput, unit: 'metric', fav: isInStorage(searchInput, 'likedStorage')});
+      //this._render({value: searchInput, unit: 'metric', fav: isInStorage(searchInput, 'likedStorage')});
       return;
     }
 
@@ -95,13 +84,18 @@ export default class App extends Component {
         
   }
 
-  bindEverything() {
+  init() {
+
+    this.state = {value: '', unit: 'metric', fav: false};
+
     this.onSubmit = this.onSubmit.bind(this);
     this.onClick = this.onClick.bind(this);
     this.onSearch = this.onSearch.bind(this);
   }
 
-  render(data) {
+  render() {
+
+    const data = this.state;
 
     return [
 
@@ -177,7 +171,7 @@ export default class App extends Component {
                 props: {
                   query: data,
                   unit: data?data.unit:'metric', 
-                  fav: data?data.fav:'no',
+                  fav: data?data.fav:false,
                 },
               },
               

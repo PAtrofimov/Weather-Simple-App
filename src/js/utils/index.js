@@ -18,30 +18,7 @@ export const createDomFragment = string => {
     }
     return domElement;
   };
-  
-  export const buildDomFragment = (host, elements) => {
-    elements.forEach(elementSpec => {
-      let element = document.createElement(typeof elementSpec.tag === 'string' ? elementSpec.tag : 'div');
-      if (elementSpec.innerHTML) {
-        element.innerHTML = elementSpec.innerHTML;
-      }
-      if (elementSpec.classList) {
-        if (typeof elementSpec.classList === 'string') {
-          elementSpec.classList = elementSpec.classList.split(' ');
-        }
-        element.classList.add(...elementSpec.classList);
-      }
-      if (!(typeof elementSpec.tag === 'string')) {
-        new elementSpec.tag(element, elementSpec.props);
-      }
-      if (elementSpec.children) {
-        buildDomFragment(element, elementSpec.children);
-      }
-      host.appendChild(element);
-    });
-    return host;
-  };
-  
+      
   export const bindScope = (scope, ...names) => {
     names.forEach(name => {
       if (typeof scope[name] === 'function') {
@@ -59,8 +36,8 @@ export const createDomFragment = string => {
         JSON.parse(localStorage[key]) : [];
     let newData = data.slice();
     if(item){
-        if(!newData.includes(item)){newData.push(item)};
-        if(newData.length===10){newData.shift()};
+        if(!newData.includes(item)){newData.push(item);}
+        if(newData.length===10){newData.shift();}
         localStorage[key] = JSON.stringify(newData);
     }
 };
