@@ -6,15 +6,16 @@ class AppState {
   }
 
   watch(entity, watcher) {
-    if (this.watchers[entity]) {
-      this.watchers[entity].push(watcher);
-    } else {
-      this.watchers[entity] = [watcher];
-    }
+    // if (this.watchers[entity]) {
+    //    this.watchers[entity].push(watcher);
+    // } else {
+    this.watchers[entity] = [watcher];
+    // }
   }
 
   update(entity, newValue) {
-    this.watchers[entity] && this.watchers[entity].forEach(watcher => watcher(newValue));
+    this.watchers[entity] &&
+      this.watchers[entity].forEach(watcher => watcher(newValue));
   }
 }
 

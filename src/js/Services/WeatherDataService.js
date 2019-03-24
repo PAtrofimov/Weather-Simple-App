@@ -1,80 +1,76 @@
-import {URL_API_CURRENT, URL_API_FORECAST} from "../config.js";
+import { URL_API_CURRENT, URL_API_FORECAST } from "../config.js";
 
-class WeatherDataService{
+class WeatherDataService {
+  apiPath(data = {}) {
+    let query = "";
 
- apiPath(data={}) {
-  let query = '';
+    if (data) {
+      const dataList = data.value.split(",");
+      if (dataList.length >= 2 && data.value.search(/\d/) !== -1) {
+        query = `lon=${dataList[0].trim()}&lat=${dataList[1].trim()}&units=${
+          data.unit
+        }`;
+      } else {
+        query = `q=${data.value}&units=${data.unit}`;
+      }
+    }
 
-  if (data) {
-    const dataList = data.value.split(',');
-      if (dataList.length >= 2 && data.value.search(/\d/) !==-1) 
-      {query = `lon=${dataList[0].trim()}&lat=${dataList[1].trim()}&units=${data.unit}`;} 
-      else
-      {query = `q=${data.value}&units=${data.unit}`;}
+    return query;
   }
 
-  return query;
+  getCurrentWeather(data = {}) {
+    let query = this.apiPath(data);
 
- } 
-    
-  
-getCurrentWeather(data={}) {
+    //if (!data.value) return {};
 
- let query =  this.apiPath(data);
+    let path = URL_API_CURRENT.replace(/#query/, query);
 
-  if (!query) return {};
-
-let path = URL_API_CURRENT.replace(/#query/, query);
-
-return fetch(path, {method: 'get'})
+    return fetch(path, {
+      method: "get"
+    })
       .then(response => {
-        if (response.ok)
-          return response.json();
+        if (response.ok) return response.json();
         throw response.status;
       })
       .then(data => {
-               
-       // console.log(data);
+        // console.log(data);
         return data;
       })
       .catch(error => {
-         console.error(error);
-         if (error =='404')
-                 document.querySelector('#weather-container').innerHTML = 'Nothing found! Please check city!';
+        console.error(error);
+        if (error == "404")
+          document.querySelector("#weather-container").innerHTML =
+            "Nothing found! Please check city!";
         throw error;
       });
+  }
+  getWeatherForecast(data = {}) {
+    let query = this.apiPath(data);
 
-        
+    // if (!data.value) return {};
 
-    }
-    getWeatherForecast(data={}) {
-      let query =  this.apiPath(data);
-      
-      if (!query) return {};
-       
-      let path = URL_API_FORECAST.replace(/#query/, query);
+    let path = URL_API_FORECAST.replace(/#query/, query);
 
-      console.log(path);
-       
-          return fetch(path, {method: 'get'})
-              .then(response => {
-                if (response.ok)
-                  return response.json();
-                throw response.status;
-              })
-              .then(data => {
-                
-              return data;
-            })
-              .catch(error => {
-                 console.error(error);
-                 if (error =='404')
-                 document.querySelector('#weather-container').innerHTML = "<h4 class='weather-error'>Nothing found! Please check city!</h4>";
-                throw error;
-              });
+    console.log(path);
 
-    }
-
+    return fetch(path, {
+      method: "get"
+    })
+      .then(response => {
+        if (response.ok) return response.json();
+        throw response.status;
+      })
+      .then(data => {
+        return data;
+      })
+      .catch(error => {
+        console.error(error);
+        if (error == "404")
+          document.querySelector("#weather-container").innerHTML =
+            "<h4 class='weather-error'>Nothing found! Please check city!</h4>";
+        throw error;
+      });
+  }
 }
-  
-   export default new WeatherDataService();
+
+export default new WeatherDataService();

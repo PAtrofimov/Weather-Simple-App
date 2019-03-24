@@ -1,4 +1,8 @@
-import { clearDomChildren, appendDomFragment, buildDomFragment } from "../utils";
+import {
+  clearDomChildren,
+  appendDomFragment,
+  buildDomFragment
+} from "../utils";
 import ComponentFactory from "../framework/ComponentFactory";
 
 export default class Component {
@@ -9,34 +13,32 @@ export default class Component {
     this.init();
     this._render();
   }
-  
+
   updateState(partState) {
     this.state = Object.assign({}, this.state, partState);
     this._render();
   }
 
-  init() {
-
-  }
+  init() {}
 
   _render(dataR) {
     this.host.innerHTML = "";
     let content = this.render(dataR);
 
     if (!Array.isArray(content)) {
-      content = [ content ];
+      content = [content];
     }
 
-    content.map(item => this._vDomPrototypeElementToHtmlElement(item)) // [string|HTMLElement] => [HTMLElement]
+    content
+      .map(item => this._vDomPrototypeElementToHtmlElement(item)) // [string|HTMLElement] => [HTMLElement]
       .forEach(htmlElement => {
         this.host.appendChild(htmlElement);
       });
   }
 
-
   /* @returns {string|[string|HTMLElement|Component]} */
   render() {
-    return 'OMG! They wanna see me!!!!!! Aaaaaa';
+    return "OMG! They wanna see me!!!!!! Aaaaaa";
   }
 
   /**
@@ -45,7 +47,7 @@ export default class Component {
    * @private
    */
   _vDomPrototypeElementToHtmlElement(element) {
-    if (typeof element === 'string') {
+    if (typeof element === "string") {
       // let container;
       // const containsHtmlTags = /[<>&]/.test(element);
       // if (containsHtmlTags) {
@@ -58,12 +60,10 @@ export default class Component {
 
       element = this._createDomFragment(element);
       return element;
-      
     } else {
       if (element.tag) {
-        if (typeof element.tag === 'function') {
-
-          const container = document.createElement('div');
+        if (typeof element.tag === "function") {
+          const container = document.createElement("div");
           new element.tag(container, element.props);
 
           return container;
@@ -75,7 +75,7 @@ export default class Component {
           }
 
           // ensure following element properties are Array
-          ['classList', 'attributes', 'children'].forEach(item => {
+          ["classList", "attributes", "children"].forEach(item => {
             if (element[item] && !Array.isArray(element[item])) {
               element[item] = [element[item]];
             }
@@ -92,7 +92,10 @@ export default class Component {
           // process eventHandlers
           if (element.eventHandlers) {
             Object.keys(element.eventHandlers).forEach(eventType => {
-              container.addEventListener(eventType, element.eventHandlers[eventType]);
+              container.addEventListener(
+                eventType,
+                element.eventHandlers[eventType]
+              );
             });
           }
 
@@ -111,78 +114,88 @@ export default class Component {
     }
   }
 
-//   _render(dataR) {
-//     let rendered = this.render(dataR);
-//     if (typeof rendered === 'string') {
-//       rendered = this._createDomFragment(rendered);
-//     }
-//     if (Array.isArray(rendered) && rendered[0].tag) {
-//       rendered = buildDomFragment(document.createDocumentFragment(), rendered);
-//     }
-//     appendDomFragment(clearDomChildren(this.host), rendered);
-//   }
+  _createDomFragment(string) {
+    const template = document.createElement("template");
 
-_createDomFragment(string) {
-  const template = document.createElement('template');
+    let componentCount = 0;
+    let idBase = new Date().getTime();
+    let componentMap = {};
 
-  let componentCount = 0;
-  let idBase = new Date().getTime();
-  let componentMap = {};
+    string = string
+      .trim()
+      .replace(/<([A-Z][a-zA-Z]*)(.*)\/>/g, (match, p1, p2, offset) => {
+        const id = "z" + idBase + componentCount++;
 
-  string = string.trim().replace(/<([A-Z][a-zA-Z]*)(.*)\/>/g, (match, p1, p2, offset) => {
-    const id = 'z' + idBase + (componentCount++);
+        // extract props
+        let props = {};
+        let parsingResults;
+        p2 = p2.trim();
+        if (p2.length) {
+          const paramsRegex = /(\S+)=['"]?((?:(?!\/>|>|"|'|\s).)+)/g;
+          while ((parsingResults = paramsRegex.exec(p2)) !== null) {
+            let objectPropertyName = parsingResults[2].match(/{(.*)}/);
+            const propValue = objectPropertyName
+              ? this[
+                  objectPropertyName[1]
+                    .split(".")
+                    .filter(segment => segment !== "this")
+                    .join(".")
+                ]
+              : parsingResults[2];
+            props[parsingResults[1]] = propValue;
+          }
+        }
 
-    // extract props
-    let props = {};
-    let parsingResults;
-    p2 = p2.trim();
-    if (p2.length) {
-      const paramsRegex = /(\S+)=['"]?((?:(?!\/>|>|"|'|\s).)+)/g;
-      while ((parsingResults = paramsRegex.exec(p2)) !== null) {
-        let objectPropertyName = parsingResults[2].match(/{(.*)}/);
-        const propValue = objectPropertyName
-          ? this[objectPropertyName[1].split('.').filter(segment => segment !== 'this').join('.')]
-          : parsingResults[2];
-        props[parsingResults[1]] = propValue;
-      }
-    }
+        componentMap[id] = {
+          name: p1,
+          props: props
+        };
+        return `<div id="${id}"></div>`;
+      });
+    template.innerHTML = string;
 
-    componentMap[id] = {
-      name: p1,
-      props: props,
-    };
-    return `<div id="${id}"></div>`;
-  });
-  template.innerHTML = string;
-
-  // manage event handlers
-  const eventTypes = ['click', 'mouseup', 'mousedown', 'mouseover', 'mousein', 'mouseout',
-    'change', 'input', 'keyup', 'keydown',
-    'focus', 'blur'
-  ];
-  const elementsWithListeners = template.content.querySelectorAll([eventTypes].map(eventType => 'on-' + eventType));
-  elementsWithListeners.forEach(element => {
-    eventTypes.forEach(eventType => {
-      if (element.hasAttribute('on-' + eventType)) {
-        let handlerName = element.getAttribute('on-' + eventType).match(/{(.*)}/)[1];
-        handlerName = handlerName.split('.').filter(segment => segment !== 'this').join('.');
-        element.addEventListener(eventType, this[handlerName].bind(this));
-      }
+    // manage event handlers
+    const eventTypes = [
+      "click",
+      "mouseup",
+      "mousedown",
+      "mouseover",
+      "mousein",
+      "mouseout",
+      "change",
+      "input",
+      "keyup",
+      "keydown",
+      "focus",
+      "blur",
+      "div.wt-row",
+      "div.unit-switch"
+    ];
+    const elementsWithListeners = template.content.querySelectorAll(
+      [eventTypes].map(eventType => "on-" + eventType)
+    );
+    elementsWithListeners.forEach(element => {
+      eventTypes.forEach(eventType => {
+        if (element.hasAttribute("on-" + eventType)) {
+          let handlerName = element
+            .getAttribute("on-" + eventType)
+            .match(/{(.*)}/)[1];
+          handlerName = handlerName
+            .split(".")
+            .filter(segment => segment !== "this")
+            .join(".");
+          element.addEventListener(eventType, this[handlerName].bind(this));
+        }
+      });
     });
-  });
 
-  // render mapped components
-  Object.keys(componentMap).forEach(id => {
-    let host = template.content.querySelector('#' + id);
-    const cls = ComponentFactory.get(componentMap[id].name);
-    new cls(host, componentMap[id].props);
-  });
+    // render mapped components
+    Object.keys(componentMap).forEach(id => {
+      let host = template.content.querySelector("#" + id);
+      const cls = ComponentFactory.get(componentMap[id].name);
+      new cls(host, componentMap[id].props);
+    });
 
-  return template.content;
-
+    return template.content;
+  }
 }
-
-
-}
-
-
